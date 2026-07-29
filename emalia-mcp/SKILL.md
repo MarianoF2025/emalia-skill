@@ -220,8 +220,8 @@ cómo vienen, qué hay programado. Empezá por `agencia_listar_cartera`, que ade
 **número de cliente** (`EM-XXXXX`) que todo lo demás pide.
 
 **El parámetro `cliente`** está en las 31 herramientas normales y sirve para operar **dentro
-de** la cuenta de un cliente: `listar_contactos` con `cliente: "EM-00042"` lista los
-contactos de ese cliente, no los tuyos.
+de** la cuenta de un cliente: `listar_contactos` con `cliente: "EM-00000"` lista los
+contactos de ese cliente, no los tuyos. El número real sale de `agencia_listar_cartera`.
 
 Tres cosas que hay que saber:
 

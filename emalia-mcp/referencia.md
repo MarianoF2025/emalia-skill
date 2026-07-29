@@ -21,6 +21,10 @@ Devuelve `cuenta` (nombre), `plan` (el slug: `free`, `inicio`, `impulso`, `escal
 `a_medida`), `slug`, `tenant_id` y `operando_como` — `null` en tu propia cuenta, o
 `{agencia, cliente, numero_cliente, tu_rol}` si estás operando un cliente.
 
+`tenant_id` es un identificador interno: ninguna herramienta lo pide y a la persona no le
+dice nada. **No lo muestres en la respuesta.** Para nombrar una cuenta usá `cuenta`, y para
+identificar a un cliente de una cartera, `numero_cliente`.
+
 ### `estado_cuenta`
 Sin parámetros. Cuánto margen queda.
 

@@ -7,7 +7,7 @@ administrar la cartera de una agencia.
 ## Instalar
 
 Descargá el `.zip` desde
-[Releases](https://github.com/emalia/emalia-skill/releases) y cargalo en el programa que uses
+[Releases](https://github.com/MarianoF2025/emalia-skill/releases) y cargalo en el programa que uses
 como skill. Después conectá el conector de Emalia desde
 **Emalia → integraciones → asistentes IA**.
 
