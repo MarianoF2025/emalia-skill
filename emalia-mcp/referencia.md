@@ -1,9 +1,9 @@
-# Referencia de las 40 herramientas
+# Referencia de las 42 herramientas
 
 Parámetros exactos, valores admitidos y qué devuelve cada una. Lo obligatorio va en
 **negrita**; el resto es opcional.
 
-**Todas las herramientas de esta página, salvo las ocho `agencia_*`, aceptan además un
+**Todas las herramientas de esta página, salvo las diez `agencia_*`, aceptan además un
 parámetro `cliente`** (número `EM-XXXXX` o nombre) para operar sobre la cuenta de un cliente
 de la cartera. Ver la sección 7 del SKILL.md.
 
@@ -392,7 +392,7 @@ No se pueden crear ni publicar landings desde acá.
 
 ## Agencia
 
-Estas ocho **no** llevan `cliente`. Llevan `agencia`, opcional, y solo hace falta si
+Estas diez **no** llevan `cliente`. Llevan `agencia`, opcional, y solo hace falta si
 pertenecés a más de una.
 
 ### `agencia_listar_cartera`
@@ -400,12 +400,28 @@ Sin parámetros. **Empezá por acá:** devuelve el `numero_cliente` (`EM-XXXXX`)
 las demás y el parámetro `cliente`.
 
 Devuelve `agencia`, `tu_rol` y `clientes` con `cliente`, `numero_cliente`, `plan`, `estado`,
-`contactos_activos` y `envios_este_mes`.
+`contactos_activos`, `envios_este_mes`, `limite_envios_mes` y `uso_envios_pct`.
 
 Si sos colaborador ves solo tus clientes asignados; si sos dueño o socio, todos.
 
-No trae el límite de envíos: para saber a quién le queda margen, `estado_cuenta` con
-`cliente`.
+Con `uso_envios_pct` se ve de una llamada a quién le queda margen. Para el resto del consumo
+de una cuenta (automatizaciones, landings, usuarios), `estado_cuenta` con `cliente`.
+
+### `agencia_salud_cartera`
+Sin parámetros. **"¿Qué clientes necesitan atención?"** en una llamada.
+
+Por cada cliente revisa lo mismo que `salud_cuenta` —envíos pausados, dominio propio sin
+verificar o sin usar, rebote por encima del 2%, lista gastada— y además si usó el 80% o más de
+los envíos del mes y si no tiene ninguna campaña programada.
+
+Devuelve `clientes`, `necesitan_atencion` y `cartera`, **ordenada de más avisos a menos**, con
+`cliente`, `numero_cliente`, `plan`, `se_puede_operar`, `avisos` (frases ya redactadas),
+`entregabilidad`, `dominio_verificado`, `tasa_rebote_pct`, `envios_pausados`, `uso_envios_pct`
+y `campanas_programadas`.
+
+Empezá por los avisos. Un cliente sin plan pago viene con `se_puede_operar: false` y sin más
+detalle: en modo agencia no se opera. `se_puede_operar: null` es que esa cuenta no se pudo
+revisar ahora, **no** que esté sana.
 
 ### `agencia_resumen_cartera`
 Sin parámetros. El pulso de la cartera para la revisión semanal.
@@ -474,3 +490,27 @@ la agencia. El acceso le llega por mail al cliente; la herramienta no devuelve n
 
 Devuelve `numero_cliente`, que es lo que piden las demás. Si el email ya tiene una cuenta en
 Emalia —también escrito de otra forma, como `nombre+algo@`— falla y no crea nada.
+
+### `agencia_copiar_plantilla`
+**Crea una plantilla en cada destino: confirmá con la persona a qué clientes va.**
+
+- **`plantilla_id`** — de `listar_plantillas` pasando el cliente de origen
+- **`desde`** — el cliente de origen (mejor el número `EM-XXXXX`)
+- **`hacia`** — los clientes destino, de 1 a 20
+- `nombre` — el nombre de la copia; por defecto, el de la original. Si la original nombra al
+  cliente de origen, cambialo
+
+Se copian los bloques, el estilo, el asunto y el preheader **tal cual**: el logo, los colores y
+los links son los del cliente de origen. Decile a la persona que la revise en cada cliente.
+
+**Los productos no se copian**: son del catálogo del cliente de origen. Se sacan y viene
+`productos_sacados`; en cada destino se ponen los suyos con `buscar_productos` y
+`crear_plantilla`. Tampoco se copia la descripción.
+
+Origen y destinos tienen que ser de la cartera y tener plan pago. Un destino que no puede —sin
+plan pago, fuera de la cartera, con el tope de plantillas lleno— no frena a los demás: viene
+en `copias` con `copiada: false` y su `motivo`. No se copian las plantillas internas del
+sistema ni las de HTML importado sin bloques.
+
+Devuelve `origen`, `plantilla`, `productos_sacados` y `copias`, una por destino, con
+`copiada` y `plantilla_id` o `motivo`.

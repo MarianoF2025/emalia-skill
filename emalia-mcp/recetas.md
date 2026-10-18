@@ -144,7 +144,7 @@ parezcan candidatas — la configuración del disparador dice qué etiqueta mira
 ## 7. Revisión semanal de una agencia
 
 ```
-agencia_resumen_cartera          alertas: quién no tiene nada programado
+agencia_salud_cartera            a quién mirar: pausas, dominio, rebote, envíos, nada programado
 agencia_campanas_cartera         la agenda de la semana
 agencia_reporte_cliente          los números de uno
 agencia_comparar_clientes        de 2 a 6, lado a lado
@@ -158,6 +158,21 @@ Cierra hasta el borrador. **Aprobarlo y enviarlo es de la persona dueña o socia
 Para operar **dentro** de la cuenta de un cliente —armarle una campaña, mirarle los
 contactos— no son estas herramientas: es el parámetro `cliente` en las normales. Y ahí el
 plan que se aplica es el **del cliente**.
+
+**El mismo email para varios clientes:**
+
+```
+listar_plantillas (cliente: origen)   la plantilla a llevar
+agencia_copiar_plantilla              una copia en cada destino, sin los productos
+crear_campana (cliente: destino)      borrador en cada uno, con la copia
+```
+
+La copia no se puede editar desde acá. Si el email tiene que llevar los productos de cada
+cliente, no conviene copiarlo: armalo en cada uno con `buscar_productos` y `crear_plantilla`
+pasando ese `cliente`.
+
+Al cerrar, decí en cuáles se copió, en cuáles no y por qué, y que el logo, los colores y los
+links son los de la original.
 
 ---
 
