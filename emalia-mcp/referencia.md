@@ -1,9 +1,9 @@
-# Referencia de las 38 herramientas
+# Referencia de las 40 herramientas
 
 Parámetros exactos, valores admitidos y qué devuelve cada una. Lo obligatorio va en
 **negrita**; el resto es opcional.
 
-**Todas las herramientas de esta página, salvo las siete `agencia_*`, aceptan además un
+**Todas las herramientas de esta página, salvo las ocho `agencia_*`, aceptan además un
 parámetro `cliente`** (número `EM-XXXXX` o nombre) para operar sobre la cuenta de un cliente
 de la cartera. Ver la sección 7 del SKILL.md.
 
@@ -332,6 +332,21 @@ Devuelve `plantillas` **sin el HTML**, de la editada más recientemente a la má
 Devuelve la plantilla con `html_content` **entero, sin recortar**. Puede ser largo: no la
 llames en lote sobre muchas plantillas. Para elegir una alcanza con `listar_plantillas`.
 
+### `buscar_productos`
+- `buscar` — palabras del nombre del producto; tienen que estar **todas** en el título. Sin
+  esto, los más nuevos
+- `cantidad` — de 1 a 25, por defecto 10
+
+Busca en el catálogo de productos de la cuenta: lo que trajo la tienda conectada y lo que se
+cargó a mano. Solo lo que sigue publicado en la tienda. "Los más nuevos" son los que entraron
+último a Emalia, no la fecha de publicación en la tienda. No hay datos de stock.
+
+Devuelve `productos` con `provider`, `id_externo`, `titulo`, `precio`, `moneda`, `imagen` y
+`url`, y `hay_mas` si quedaron más resultados que `cantidad`. Para ponerlos en un email,
+pasá `provider` e `id_externo` a un bloque `productos` de `crear_plantilla`.
+
+Un texto que no deja ninguna palabra para buscar no trae todo el catálogo: no trae nada.
+
 ### `crear_plantilla`
 **Requiere plan de pago.**
 
@@ -340,10 +355,14 @@ llames en lote sobre muchas plantillas. Para elegir una alcanza con `listar_plan
 - **`bloques`** — al menos uno
 - `preheader`, `descripcion`
 
-Los seis tipos de bloque y sus campos **exactos** están en la sección 6 del SKILL.md.
+Los siete tipos de bloque y sus campos **exactos** están en la sección 6 del SKILL.md.
 Resumen: `titulo` lleva `texto`/`nivel`/`alineacion`; `parrafo` lleva **`html`**; `boton`
 lleva `texto` y **`link`**; `imagen` lleva **`src`**, `alt` y `link` opcional; `separador` no
-lleva nada; `espacio` lleva **`alto`** (8 a 120 px).
+lleva nada; `espacio` lleva **`alto`** (8 a 120 px); `productos` lleva **`productos`**, de 1
+a 8 `{ provider, id_externo }` de `buscar_productos`, y `texto_boton` opcional.
+
+Los datos de cada producto —foto, título, precio, link— se leen del catálogo de la cuenta al
+crear. Si un id no está ahí, **la plantilla entera se rechaza** y el mensaje dice cuál.
 
 No se puede **editar** una plantilla existente: eso es el editor de Emalia.
 
@@ -373,7 +392,7 @@ No se pueden crear ni publicar landings desde acá.
 
 ## Agencia
 
-Estas siete **no** llevan `cliente`. Llevan `agencia`, opcional, y solo hace falta si
+Estas ocho **no** llevan `cliente`. Llevan `agencia`, opcional, y solo hace falta si
 pertenecés a más de una.
 
 ### `agencia_listar_cartera`
@@ -433,3 +452,25 @@ Si el reporte de ese período ya fue aprobado o enviado, falla en vez de pisarlo
 Devuelve `factura_mes`, `comisiones_pendientes_usd` y `comisiones_historico_usd`.
 
 `factura_mes: null` significa que el cálculo falló, no que no haya nada que facturar.
+
+### `agencia_alta_cliente`
+**Solo el dueño o un socio de la agencia.** Es la única herramienta de agencia que crea algo
+y no se deshace desde el chat: **confirmá los datos con la persona antes de llamarla.**
+
+- **`nombre`** — como va a figurar la cuenta
+- **`email_contacto`** — el email del dueño de la cuenta, sin acentos ni ñ
+- **`billing_mode`** — `cliente` o `paquete`:
+  - `cliente`: el cliente paga su plan con el descuento de agencia. La cuenta nace en el plan
+    gratuito y el plan lo elige el cliente al pagar. **Hasta que pague, la agencia no la
+    puede operar.**
+  - `paquete`: la cuenta usa envíos del paquete de la agencia (la agencia tiene que tener uno
+    activo), con el cupo de `cupo`.
+- `cupo` — solo con `paquete`: los envíos por mes que le tocan
+- `precio_reventa` — lo que la agencia le cobra al cliente; solo informativo
+- `plan_slug` — no hace falta
+
+Que **la pague la agencia** con su tarjeta no se puede desde el chat: es desde la consola de
+la agencia. El acceso le llega por mail al cliente; la herramienta no devuelve ningún link.
+
+Devuelve `numero_cliente`, que es lo que piden las demás. Si el email ya tiene una cuenta en
+Emalia —también escrito de otra forma, como `nombre+algo@`— falla y no crea nada.

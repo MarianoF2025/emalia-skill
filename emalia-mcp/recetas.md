@@ -17,6 +17,7 @@ estado_cuenta                    ¿queda cupo de envíos este mes?
 listar_listas                    elegir el destino, quedarse con el id
 listar_plantillas                ¿hay algo reusable?
   └─ si no hay: crear_plantilla  escribir el email
+       └─ con productos: antes buscar_productos (provider + id_externo)
 crear_campana                    borrador, con el contenido ya cargado
 enviar_prueba                    llega a tu bandeja
 programar_campana                queda agendada

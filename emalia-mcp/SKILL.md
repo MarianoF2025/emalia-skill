@@ -52,6 +52,7 @@ cosas piden ids, y los ids no se adivinan:
 | `ver_campana`, `programar_campana`, `enviar_prueba` | `id` / `campana_id` de `listar_campanas` |
 | `ver_automation`, `resultados_automation`, `cambiar_estado_automation` | `id` de `listar_automations` |
 | `ver_plantilla` | `id` de `listar_plantillas` |
+| `crear_plantilla` con productos | `provider` e `id_externo` de cada producto, de `buscar_productos` |
 
 Un id inventado no rompe de forma visible: devuelve "no encontrado en tu cuenta", y si el
 error se maneja mal, termina en una respuesta que suena bien y no corresponde a nada.
@@ -141,7 +142,7 @@ Es la única herramienta de audiencia con efecto de envío. Si hay una automatiz
 disparador de etiqueta agregada, asignar esa etiqueta **hace que empiecen a salir emails**.
 Confirmalo antes, sobre todo si son varios contactos. `quitar_etiqueta` no dispara nada.
 
-## 4. Las 38 herramientas
+## 4. Las 40 herramientas
 
 **Cuenta y diagnóstico** — `emalia_whoami`, `estado_cuenta`, `salud_cuenta`,
 `metricas_dashboard`.
@@ -156,13 +157,13 @@ Confirmalo antes, sobre todo si son varios contactos. `quitar_etiqueta` no dispa
 **Automatizaciones** — `listar_automations`, `ver_automation`, `resultados_automation`,
 `crear_automation`, `cambiar_estado_automation`.
 
-**Plantillas** — `listar_plantillas`, `ver_plantilla`, `crear_plantilla`.
+**Plantillas** — `listar_plantillas`, `ver_plantilla`, `buscar_productos`, `crear_plantilla`.
 
 **Captación** — `listar_formularios`, `listar_landings`.
 
 **Agencia** — `agencia_listar_cartera`, `agencia_resumen_cartera`, `agencia_reporte_cliente`,
 `agencia_comparar_clientes`, `agencia_campanas_cartera`, `agencia_crear_borrador_reporte`,
-`agencia_facturacion`.
+`agencia_facturacion`, `agencia_alta_cliente`.
 
 Los parámetros exactos de cada una están en `referencia.md`.
 
@@ -188,7 +189,7 @@ equipo en esa cuenta.
 
 ## 6. Escribir un email: los nombres de campo exactos
 
-`crear_plantilla` recibe `bloques`, una lista en orden de arriba hacia abajo. Hay seis
+`crear_plantilla` recibe `bloques`, una lista en orden de arriba hacia abajo. Hay siete
 tipos, y **los nombres de campo son estrictos**: si mandás `texto` donde va `html`, la
 llamada se rechaza entera.
 
@@ -200,6 +201,17 @@ llamada se rechaza entera.
 | `imagen` | **`src`** — no `url` —, URL pública; `alt`; `link` opcional |
 | `separador` | ninguno |
 | `espacio` | **`alto`** en píxeles, de 8 a 120, por defecto 32 |
+| `productos` | **`productos`**: de 1 a 8 `{ provider, id_externo }` de `buscar_productos`; `texto_boton` opcional (por defecto "Comprar") |
+
+**Productos de la tienda.** Si el email lleva productos, buscalos primero con
+`buscar_productos` (por nombre, o sin `buscar` para los más nuevos) y pasá solo su
+`provider` e `id_externo`. **No escribas precios, fotos ni links de productos a mano**: la
+foto, el título, el precio y el link se toman del catálogo de la cuenta al crear. Uno solo
+sale como una tarjeta; de 2 a 8, en filas que en el celular quedan uno abajo del otro. Si un
+id no está en el catálogo —inventado, de otra cuenta o que ya salió de la tienda—, la
+plantilla entera se rechaza diciendo cuál: volvé a buscarlo, no lo reemplaces por otro sin
+preguntar. "Los más nuevos" son los que entraron último a Emalia, no la fecha de la tienda, y
+no hay datos de stock.
 
 En `parrafo.html` se acepta HTML simple: `<p>`, `<strong>`, `<em>`, `<a href>`, `<ul>`/`<li>`.
 `{{nombre}}` en cualquier texto se reemplaza por el nombre de cada contacto.
@@ -215,18 +227,23 @@ cortos, **un** botón principal y no cinco.
 Si la persona administra varias cuentas, hay dos formas de trabajar y conviene no
 confundirlas.
 
-**Las siete herramientas `agencia_*`** miran la cartera entera: quiénes son los clientes,
-cómo vienen, qué hay programado. Empezá por `agencia_listar_cartera`, que además devuelve el
+**Las ocho herramientas `agencia_*`** miran la cartera entera: quiénes son los clientes,
+cómo vienen, qué hay programado. `agencia_alta_cliente` es la única que crea algo —una cuenta
+de cliente nueva—: confirmá los datos con la persona antes de llamarla. Empezá por `agencia_listar_cartera`, que además devuelve el
 **número de cliente** (`EM-XXXXX`) que todo lo demás pide.
 
-**El parámetro `cliente`** está en las 31 herramientas normales y sirve para operar **dentro
+**El parámetro `cliente`** está en las 32 herramientas normales y sirve para operar **dentro
 de** la cuenta de un cliente: `listar_contactos` con `cliente: "EM-00000"` lista los
 contactos de ese cliente, no los tuyos. El número real sale de `agencia_listar_cartera`.
 
 Tres cosas que hay que saber:
 
-- **El plan que se aplica es el del cliente, no el de la agencia.** Si el cliente está en un
-  plan gratuito, `crear_campana` va a rechazar aunque la agencia tenga el plan más alto.
+- **Solo se operan clientes con plan pago**: como mínimo Inicio, o dentro del paquete de la
+  agencia. Con un cliente en el plan gratuito, cualquier herramienta con `cliente` rechaza y
+  el mensaje dice por qué. Una cuenta dada de alta con `billing_mode: "cliente"` nace en el
+  plan gratuito: no se puede operar hasta que el cliente pague su plan.
+- **El plan que se aplica es el del cliente, no el de la agencia.** Lo que el plan del cliente
+  no incluye no se habilita porque la agencia tenga uno más alto.
 - **Pasá el número (`EM-XXXXX`) y no el nombre** siempre que lo tengas. Con el nombre, si hay
   ambigüedad la herramienta pide el número; y si hay parecido, es fácil operar sobre la
   cuenta equivocada.
@@ -258,7 +275,7 @@ Dos hábitos más:
 
 ## Archivos de apoyo
 
-- `referencia.md` — las 38 herramientas con sus parámetros, valores admitidos y qué devuelve
+- `referencia.md` — las 40 herramientas con sus parámetros, valores admitidos y qué devuelve
   cada una.
 - `recetas.md` — los flujos que cierran de punta a punta, en orden de llamadas.
 - `glosario.md` — la terminología de Emalia, y los anglicismos que reemplaza.
