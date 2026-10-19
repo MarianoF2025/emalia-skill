@@ -142,7 +142,7 @@ Es la única herramienta de audiencia con efecto de envío. Si hay una automatiz
 disparador de etiqueta agregada, asignar esa etiqueta **hace que empiecen a salir emails**.
 Confirmalo antes, sobre todo si son varios contactos. `quitar_etiqueta` no dispara nada.
 
-## 4. Las 42 herramientas
+## 4. Las 43 herramientas
 
 **Cuenta y diagnóstico** — `emalia_whoami`, `estado_cuenta`, `salud_cuenta`,
 `metricas_dashboard`.
@@ -164,7 +164,7 @@ Confirmalo antes, sobre todo si son varios contactos. `quitar_etiqueta` no dispa
 **Agencia** — `agencia_listar_cartera`, `agencia_resumen_cartera`, `agencia_reporte_cliente`,
 `agencia_comparar_clientes`, `agencia_campanas_cartera`, `agencia_crear_borrador_reporte`,
 `agencia_facturacion`, `agencia_alta_cliente`, `agencia_salud_cartera`,
-`agencia_copiar_plantilla`.
+`agencia_copiar_plantilla`, `agencia_copiar_flujo`.
 
 Los parámetros exactos de cada una están en `referencia.md`.
 
@@ -228,11 +228,15 @@ cortos, **un** botón principal y no cinco.
 Si la persona administra varias cuentas, hay dos formas de trabajar y conviene no
 confundirlas.
 
-**Las diez herramientas `agencia_*`** miran la cartera entera: quiénes son los clientes,
+**Las once herramientas `agencia_*`** miran la cartera entera: quiénes son los clientes,
 cómo vienen, qué hay programado. Para "¿qué clientes tengo que mirar?", `agencia_salud_cartera`
-lo responde en una llamada. Dos crean cosas, y en las dos se confirma con la persona antes:
-`agencia_alta_cliente` crea una cuenta de cliente nueva, y `agencia_copiar_plantilla` copia
-una plantilla de un cliente a otros (sin los productos, que son del catálogo de cada uno). Empezá por `agencia_listar_cartera`, que además devuelve el
+lo responde en una llamada. Tres crean cosas, y en las tres se confirma con la persona antes:
+- `agencia_alta_cliente` crea una cuenta de cliente nueva.
+- `agencia_copiar_plantilla` copia una plantilla de un cliente a otros, sin los productos, que
+  son del catálogo de cada uno.
+- `agencia_copiar_flujo` copia una automatización entera (el embudo) de un cliente a otros, en
+  pausa. Devuelve `pendientes` por cuenta: lo que quedó por elegir allá. **Decíselos a la persona
+  uno por uno**: el flujo no se puede prender hasta completarlos. Empezá por `agencia_listar_cartera`, que además devuelve el
 **número de cliente** (`EM-XXXXX`) que todo lo demás pide.
 
 **El parámetro `cliente`** está en las 32 herramientas normales y sirve para operar **dentro
@@ -278,7 +282,7 @@ Dos hábitos más:
 
 ## Archivos de apoyo
 
-- `referencia.md` — las 42 herramientas con sus parámetros, valores admitidos y qué devuelve
+- `referencia.md` — las 43 herramientas con sus parámetros, valores admitidos y qué devuelve
   cada una.
 - `recetas.md` — los flujos que cierran de punta a punta, en orden de llamadas.
 - `glosario.md` — la terminología de Emalia, y los anglicismos que reemplaza.

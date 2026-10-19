@@ -159,6 +159,16 @@ Para operar **dentro** de la cuenta de un cliente —armarle una campaña, mirar
 contactos— no son estas herramientas: es el parámetro `cliente` en las normales. Y ahí el
 plan que se aplica es el **del cliente**.
 
+**El mismo embudo para varios clientes:**
+
+```
+listar_automations (cliente: origen)   el flujo a llevar
+agencia_copiar_flujo                   una copia en pausa en cada destino
+```
+
+Al cerrar, decí en cuáles se copió y **los pendientes de cada uno**: sin completarlos no se
+puede prender. Los emails llevan el logo, los colores y los links del cliente de origen.
+
 **El mismo email para varios clientes:**
 
 ```

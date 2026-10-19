@@ -19,7 +19,7 @@ de improvisar números. Es lo primero que verifica.
 ```
 emalia-mcp/
 ├── SKILL.md        el núcleo — se basta solo
-├── referencia.md   las 42 herramientas con sus parámetros exactos
+├── referencia.md   las 43 herramientas con sus parámetros exactos
 ├── recetas.md      los flujos que cierran de punta a punta
 └── glosario.md     la terminología de Emalia
 ```

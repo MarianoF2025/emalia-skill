@@ -1,9 +1,9 @@
-# Referencia de las 42 herramientas
+# Referencia de las 43 herramientas
 
 Parámetros exactos, valores admitidos y qué devuelve cada una. Lo obligatorio va en
 **negrita**; el resto es opcional.
 
-**Todas las herramientas de esta página, salvo las diez `agencia_*`, aceptan además un
+**Todas las herramientas de esta página, salvo las once `agencia_*`, aceptan además un
 parámetro `cliente`** (número `EM-XXXXX` o nombre) para operar sobre la cuenta de un cliente
 de la cartera. Ver la sección 7 del SKILL.md.
 
@@ -392,7 +392,7 @@ No se pueden crear ni publicar landings desde acá.
 
 ## Agencia
 
-Estas diez **no** llevan `cliente`. Llevan `agencia`, opcional, y solo hace falta si
+Estas once **no** llevan `cliente`. Llevan `agencia`, opcional, y solo hace falta si
 pertenecés a más de una.
 
 ### `agencia_listar_cartera`
@@ -514,3 +514,33 @@ sistema ni las de HTML importado sin bloques.
 
 Devuelve `origen`, `plantilla`, `productos_sacados` y `copias`, una por destino, con
 `copiada` y `plantilla_id` o `motivo`.
+
+### `agencia_copiar_flujo`
+**Crea en cada destino un flujo, sus emails y, si faltan, listas y etiquetas: confirmá con la
+persona a qué clientes va.**
+
+- **`automation_id`** — de `listar_automations` pasando el cliente de origen
+- **`desde`** — el cliente de origen (mejor el número `EM-XXXXX`)
+- **`hacia`** — los clientes destino, de 1 a 20
+
+El flujo llega **en pausa**, con sus pasos conectados igual y el mismo nombre (o "(copia)" si
+ya hay uno así). Lo que usa y el destino no tiene se resuelve así:
+
+| El flujo usa… | En el destino |
+|---|---|
+| Emails | Una plantilla nueva por email, **sin los bloques de productos** |
+| Listas fijas y etiquetas | La del mismo nombre; si no existe, se crea vacía |
+| Listas y etiquetas automáticas | Quedan sin elegir |
+| Campañas, formularios, landings, otro flujo | Quedan sin elegir |
+| Campos personalizados | El del mismo nombre; si no está, se avisa |
+
+**No se copian, a propósito:** la dirección de un webhook, a quién avisa "notificar al dueño"
+y el remitente propio de un paso. Mandarían datos de los contactos de un cliente a algo del
+otro.
+
+Origen y destinos tienen que ser de la cartera y tener plan pago. Si a un destino no le alcanza
+el tope de plantillas, ese no se copia y no queda nada a medias; los demás sí se copian.
+
+Devuelve `origen` y `copias`: una por destino, con `copiado`, `automation_id`, `flujo`,
+**`pendientes`** (frases ya redactadas: lo que hay que completar allá) y `creadas`
+(plantillas, listas, etiquetas), o `motivo`.
