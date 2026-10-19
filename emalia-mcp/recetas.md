@@ -169,6 +169,17 @@ agencia_copiar_flujo                   una copia en pausa en cada destino
 Al cerrar, decí en cuáles se copió y **los pendientes de cada uno**: sin completarlos no se
 puede prender. Los emails llevan el logo, los colores y los links del cliente de origen.
 
+**La misma campaña en varios clientes, lista para revisar y enviar:**
+
+```
+listar_plantillas (cliente: origen)      el email a llevar
+listar_listas (cliente: cada destino)    las listas de cada uno
+agencia_campana_en_varios_clientes       un borrador en cada cliente, con su marca
+```
+
+Al cerrar, decí en cuáles quedó, a cuántos le llega en cada uno y **los enlaces a revisar**: son
+los del original. No se envía nada: cada borrador se revisa y se envía en Emalia.
+
 **El mismo email para varios clientes:**
 
 ```

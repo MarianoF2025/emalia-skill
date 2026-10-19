@@ -1,4 +1,4 @@
-# Referencia de las 43 herramientas
+# Referencia de las 44 herramientas
 
 Parámetros exactos, valores admitidos y qué devuelve cada una. Lo obligatorio va en
 **negrita**; el resto es opcional.
@@ -514,6 +514,31 @@ sistema ni las de HTML importado sin bloques.
 
 Devuelve `origen`, `plantilla`, `productos_sacados` y `copias`, una por destino, con
 `copiada` y `plantilla_id` o `motivo`.
+
+### `agencia_campana_en_varios_clientes`
+**Crea en cada cliente una plantilla y una campaña en borrador: confirmá con la persona a qué
+clientes va y a qué listas de cada uno.** Nunca envía ni programa.
+
+- **`plantilla_id`** — de `listar_plantillas` pasando el cliente de origen
+- **`desde`** — el cliente de origen (mejor el número `EM-XXXXX`)
+- **`nombre`** — el nombre interno de la campaña en cada cliente
+- **`asunto`** — el asunto, el mismo en todos
+- `preview_text` — la vista previa; por defecto, la de la plantilla
+- **`destinos`** — de 1 a 20, cada uno `{ cliente, listas_ids }`; las listas, de `listar_listas`
+  pasando ESE cliente
+
+En cada cliente: copia la plantilla (sin los bloques de productos), le pone **la marca de ese
+cliente** si la cargó (logo, colores y tipografías) y crea la campaña en borrador con su remitente
+y sus listas. Los textos y los enlaces quedan como en el original: vienen en
+`enlaces_para_revisar`.
+
+Origen y destinos tienen que ser de la cartera y tener plan pago. Un cliente que no puede —sin
+plan pago, fuera de la cartera, listas que no son suyas, tope de plantillas lleno— no frena a
+los demás: viene en `campanas` con `creada: false` y su `motivo`.
+
+Devuelve `origen`, `plantilla`, `productos_sacados`, `enlaces_para_revisar` y `campanas`, una por
+cliente, con `creada`, `campana_id`, `listas`, `total_contactos_estimado` y `con_marca`, o
+`motivo`.
 
 ### `agencia_copiar_flujo`
 **Crea en cada destino un flujo, sus emails y, si faltan, listas y etiquetas: confirmá con la
